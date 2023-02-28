@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>KEcolab : Remote Energy Measurement Lab</title>
+	<style>
+		body {
+			background-color: #000000;
+			color: #90ee90;
+			font-size: 20px;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+		h1 {
+			text-align: center;
+			color: #90ee90;
+			font-size: 50px;
+			margin-top: 50px;
+			margin-bottom: 50px;
+		}
+		form {
+			margin: auto;
+			width: 50%;
+			padding: 20px;
+			border: 3px solid #90ee90;
+			border-radius: 10px;
+		}
+		label {
+			display: block;
+			margin-top: 20px;
+			margin-bottom: 10px;
+			color: #90ee90;
+			font-size: 25px;
+		}
+		input[type="file"] {
+			display: block;
+			margin-top: 10px;
+			margin-bottom: 20px;
+			color: #90ee90;
+			font-size: 20px;
+			border: none;
+			background-color: #000000;
+			padding: 10px;
+			border-bottom: 2px solid #90ee90;
+			border-radius: 5px;
+			cursor: pointer;
+		}
+		input[type="submit"] {
+			display: block;
+			margin: auto;
+			margin-top: 30px;
+			padding: 10px 20px;
+			background-color: #90ee90;
+			border: none;
+			border-radius: 5px;
+			font-size: 20px;
+			font-weight: bold;
+			color: #000000;
+			cursor: pointer;
+		}
+	</style>
+</head>
+<body>
+	<h1>KEcolab : Remote Energy Measurement Lab</h1>
+	<form method="post" enctype="multipart/form-data">
+		<label for="file1">Select File 1 (app.sh):</label>
+		<input type="file" id="file1" name="file1" accept=".sh">
+		<label for="file2">Select File 2 (app_idle.sh):</label>
+		<input type="file" id="file2" name="file2" accept=".sh">
+		<label for="file3">Select File 3 (app_baseline.sh):</label>
+		<input type="file" id="file3" name="file3" accept=".sh">
+		<input type="submit" value="Upload">
+	</form>
+</body>
+</html>
