@@ -26,6 +26,16 @@ def upload_files():
         sftp.put('/tmp/' + file2.filename, path2)
         sftp.put('/tmp/' + file3.filename, path3)
         sftp.close()
+        
+        # execute scripts one by one
+        scripts = [path1, path2, path3]
+        for script in scripts:
+            stdin, stdout, stderr = ssh.exec_command(f'bash {script}')
+            stdout_lines = stdout.readlines()
+            stderr_lines = stderr.readlines()
+            print(f'STDOUT: {"".join(stdout_lines)}')
+            print(f'STDERR: {"".join(stderr_lines)}')
+        
         ssh.close()
         
     return render_template('upload.html')
