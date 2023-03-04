@@ -10,6 +10,9 @@ def upload_files():
         file1 = request.files['file1']
         file2 = request.files['file2']
         file3 = request.files['file3']
+
+        app_name = request.form['app_name']
+        app_version = request.form['app_version']
         
         # tunnel files to remote server
         ssh = paramiko.SSHClient()
@@ -27,6 +30,10 @@ def upload_files():
         sftp.put('/tmp/' + file3.filename, path3)
         sftp.close()
         
+        stdin, stdout, stderr = ssh.exec_command(f"flatpak install flathub {app_name} -y --user --version={app_version}")
+        output = stdout.read().decode('utf-8')
+        error = stderr.read().decode('utf-8')
+        
         # execute scripts one by one
         scripts = [path1, path2, path3]
         for script in scripts:
@@ -35,7 +42,7 @@ def upload_files():
             stderr_lines = stderr.readlines()
             print(f'STDOUT: {"".join(stdout_lines)}')
             print(f'STDERR: {"".join(stderr_lines)}')
-        
+
         ssh.close()
         
     return render_template('upload.html')
