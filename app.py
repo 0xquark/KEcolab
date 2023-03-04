@@ -1,8 +1,28 @@
 from flask import Flask, request, render_template
 import paramiko
 import os
+from celery import Celery
 
 app = Flask(__name__)
+
+# configure Celery
+app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
+app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+celery.conf.update(app.config)
+
+@celery.task
+def execute_script(script):
+    # execute script using SSH
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect('172.16.191.132', username='alethe', key_filename='EcoLab')
+    stdin, stdout, stderr = ssh.exec_command(f'bash {script}')
+    stdout_lines = stdout.readlines()
+    stderr_lines = stderr.readlines()
+    print(f'STDOUT: {"".join(stdout_lines)}')
+    print(f'STDERR: {"".join(stderr_lines)}')
+    ssh.close()
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_files():
@@ -35,14 +55,10 @@ def upload_files():
         output = stdout.read().decode('utf-8')
         error = stderr.read().decode('utf-8')
 
-        # execute scripts one by one
+        # execute scripts asynchronously
         scripts = [path1, path2, path3]
         for script in scripts:
-            stdin, stdout, stderr = ssh.exec_command(f'bash {script}')
-            stdout_lines = stdout.readlines()
-            stderr_lines = stderr.readlines()
-            print(f'STDOUT: {"".join(stdout_lines)}')
-            print(f'STDERR: {"".join(stderr_lines)}')
+            execute_script.delay(script)
 
         ssh.close()
         
