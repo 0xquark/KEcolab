@@ -1,7 +1,9 @@
 from flask import Flask, request, render_template
 import paramiko
 import os
-from celery import Celery
+from celeryconfig import Celery
+from celery import chain
+
 
 app = Flask(__name__)
 
@@ -14,6 +16,7 @@ celery.conf.update(app.config)
 @celery.task
 def execute_script(script):
     # execute script using SSH
+    print('Executing script:', script)
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect('172.16.191.132', username='alethe', key_filename='EcoLab')
@@ -57,8 +60,8 @@ def upload_files():
 
         # execute scripts asynchronously
         scripts = [path1, path2, path3]
-        for script in scripts:
-            execute_script.delay(script)
+        task_chain = chain(execute_script.s(script) for script in scripts)
+        task_chain()
 
         ssh.close()
         
