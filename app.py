@@ -30,10 +30,11 @@ def upload_files():
         sftp.put('/tmp/' + file3.filename, path3)
         sftp.close()
         
-        stdin, stdout, stderr = ssh.exec_command(f"flatpak install flathub {app_name} -y --user --version={app_version}")
+        # install application using flatpak
+        stdin, stdout, stderr = ssh.exec_command(f"flatpak install -y flathub {app_name}/{app_version}")
         output = stdout.read().decode('utf-8')
         error = stderr.read().decode('utf-8')
-        
+
         # execute scripts one by one
         scripts = [path1, path2, path3]
         for script in scripts:
