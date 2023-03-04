@@ -17,7 +17,7 @@ def upload_files():
         # tunnel files to remote server
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect('3.108.54.0', username='kali', key_filename='Delorean.pem')
+        ssh.connect('172.16.191.132', username='alethe', key_filename='EcoLab')
         sftp = ssh.open_sftp()
         path1 = os.path.join('', file1.filename)
         path2 = os.path.join('', file2.filename)
@@ -31,7 +31,7 @@ def upload_files():
         sftp.close()
         
         # install application using flatpak
-        stdin, stdout, stderr = ssh.exec_command(f"flatpak install -y flathub {app_name}/{app_version}")
+        stdin, stdout, stderr = ssh.exec_command(f"sudo flatpak install -y flathub {app_name}/{app_version}")
         output = stdout.read().decode('utf-8')
         error = stderr.read().decode('utf-8')
 
